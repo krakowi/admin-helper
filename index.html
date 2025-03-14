@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генерация форм</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Навбар -->
+    <nav id="navbar">
+        <div class="navbar-header">
+            <button id="menu-toggle" class="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <h2>Меню</h2>
+        </div>
+        <ul class="navbar-menu">
+            <li><a href="#" id="generate-form-link" class="active">Генерация форм</a></li>
+            <li><a href="#" id="get-nicks-link">Получить ники</a></li>
+        </ul>
+    </nav>
+
+    <!-- Основной контент: Генерация форм -->
+    <div id="generate-form" class="container">
+        <h1>Генерация форм</h1>
+        <form id="form-generator">
+            <label for="command">Выберите команду:</label><br>
+            <select id="command" name="command">
+                <option value="">-- Выберите команду --</option>
+                <option value="/jailoff">/jailoff</option>
+                <option value="/banoff">/banoff</option>
+                <option value="/unban">/unban</option>
+                <option value="/unjailoff">/unjailoff</option>
+            </select><br><br>
+
+            <label for="usernames">Список ников (1 ник на строку):</label><br>
+            <textarea id="usernames" name="usernames" rows="10" cols="30"></textarea><br><br>
+
+            <label for="days">Дни:</label><br>
+            <input type="text" id="days" name="days" disabled><br><br>
+
+            <label for="reason">Причина:</label><br>
+            <input type="text" id="reason" name="reason"><br><br>
+
+            <div class="buttons">
+                <button type="submit">Сгенерировать файл</button>
+                <button type="button" id="clear-button">Очистить</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Основной контент: Получить ники -->
+    <div id="get-nicks" class="container" style="display: none;">
+        <h1>Получить ники</h1>
+        <form id="nicks-form">
+            <label for="pattern">Регулярное выражение:</label><br>
+            <input type="text" id="pattern" name="pattern" placeholder="Пример: Игрок {name} получил в инвентарь"><br><br>
+
+            <label for="log-text">Вставьте лог:</label><br>
+            <textarea id="log-text" name="log-text" rows="15" cols="50"></textarea><br><br>
+
+            <div class="buttons">
+                <button type="submit">Извлечь ники</button>
+                <button type="button" id="clear-nicks-button">Очистить</button>
+            </div>
+        </form>
+
+        <h2>Результат:</h2>
+        <pre id="nicks-result"></pre>
+    </div>
+
+    <!-- Модальное окно для отображения результата -->
+    <div id="result-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Результат</h2>
+            <pre id="result-text"></pre>
+            <button id="copy-button">Скопировать</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
