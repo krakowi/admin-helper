@@ -13,6 +13,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const getNicksSection = document.getElementById("get-nicks");
     const nicksForm = document.getElementById("nicks-form");
     const nicksResult = document.getElementById("nicks-result");
+    const methodSelect = document.getElementById("method");
+    const idInputContainer = document.getElementById("id-input-container");
+    const idInput = document.getElementById("id-input");
+    const patternInputContainer = document.getElementById("pattern-input-container");
+    const patternInput = document.getElementById("pattern");
 
     // Обработчик изменения выбора команды
     commandSelect.addEventListener("change", function () {
@@ -35,7 +40,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Обработчик очистки формы получения ников
     clearNicksButton.addEventListener("click", function () {
-        document.getElementById("pattern").value = ""; // Очищаем поле с регулярным выражением
+        patternInput.value = ""; // Очищаем поле с регулярным выражением
+        idInput.value = ""; // Очищаем поле с ID
         document.getElementById("log-text").value = ""; // Очищаем поле с логом
         nicksResult.textContent = ""; // Очищаем результат
     });
@@ -128,23 +134,52 @@ document.addEventListener("DOMContentLoaded", function () {
         setActiveLink(this);
     });
 
-    // Обработчик отправки формы для извлечения ников
-    // Обработчик отправки формы для извлечения ников
+    // Обработчик изменения способа получения ников
+    methodSelect.addEventListener("change", function () {
+        if (this.value === "vk") {
+            idInputContainer.style.display = "block"; // Показываем поле для ввода ID
+            patternInputContainer.style.display = "none"; // Скрываем поле для ввода шаблона
+        } else {
+            idInputContainer.style.display = "none"; // Скрываем поле для ввода ID
+            patternInputContainer.style.display = "block"; // Показываем поле для ввода шаблона
+        }
+    });
+
     // Обработчик отправки формы для извлечения ников
     nicksForm.addEventListener("submit", function (e) {
         e.preventDefault();
 
-        const pattern = document.getElementById("pattern").value.trim();
+        const method = document.getElementById("method").value; // Получаем выбранный способ
         const logText = document.getElementById("log-text").value.trim();
+        const id = idInput.value.trim(); // Получаем введенный ID
 
-        if (!pattern || !logText) {
-            alert("Пожалуйста, заполните все поля.");
+        if (!logText) {
+            alert("Пожалуйста, заполните поле с логом.");
+            return;
+        }
+
+        // Если выбран способ "Получить по ВК" и ID не введен
+        if (method === "vk" && !id) {
+            alert("Пожалуйста, введите ID.");
             return;
         }
 
         try {
-            // Преобразуем пользовательский шаблон в регулярное выражение
-            const regexPattern = pattern.replace(/{name}/g, "(\\S+)"); // Заменяем {name} на группу захвата
+            let regexPattern;
+
+            // Если выбран способ "Получить по ВК", используем фиксированный шаблон
+            if (method === "vk") {
+                regexPattern = `Игрок (\\S+) .* \\(id: ${id}\\)`;
+            } else {
+                // Если выбран способ "Другое", используем пользовательский шаблон
+                const pattern = patternInput.value.trim();
+                if (!pattern) {
+                    alert("Пожалуйста, введите регулярное выражение.");
+                    return;
+                }
+                regexPattern = pattern.replace(/\(name\)|\{name\}/g, "(\\S+)");
+            }
+
             const regex = new RegExp(regexPattern, "g");
 
             // Ищем совпадения в тексте

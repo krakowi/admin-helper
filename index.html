@@ -46,7 +46,7 @@
             <input type="text" id="reason" name="reason"><br><br>
 
             <div class="buttons">
-                <button type="submit">Сгенерировать файл</button>
+                <button type="submit">Сгенерировать формы</button>
                 <button type="button" id="clear-button">Очистить</button>
             </div>
         </form>
@@ -56,8 +56,23 @@
     <div id="get-nicks" class="container" style="display: none;">
         <h1>Получить ники</h1>
         <form id="nicks-form">
-            <label for="pattern">Регулярное выражение:</label><br>
-            <input type="text" id="pattern" name="pattern" placeholder="Пример: Игрок {name} получил в инвентарь"><br><br>
+            <label for="method">Способ получения:</label><br>
+            <select id="method" name="method">
+                <option value="other">По шаблону</option>
+                <option value="vk">По ID ВК</option>
+            </select><br><br>
+
+            <!-- Поле для ввода ID (отображается только при выборе "Получить по ВК") -->
+            <div id="id-input-container" style="display: none;">
+                <label for="id-input">VK ID:</label><br>
+                <input type="text" id="id-input" name="id-input" placeholder="Введите ID"><br><br>
+            </div>
+
+            <!-- Поле для ввода шаблона (отображается только при выборе "Другое") -->
+            <div id="pattern-input-container">
+                <label for="pattern">Регулярное выражение:</label><br>
+                <input type="text" id="pattern" name="pattern" placeholder="Пример: Игрок {name} получил в инвентарь предмет"><br><br>
+            </div>
 
             <label for="log-text">Вставьте лог:</label><br>
             <textarea id="log-text" name="log-text" rows="15" cols="50"></textarea><br><br>
