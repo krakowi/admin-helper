@@ -18,6 +18,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const idInput = document.getElementById("id-input");
     const patternInputContainer = document.getElementById("pattern-input-container");
     const patternInput = document.getElementById("pattern");
+    const filterLogsLink = document.getElementById("filter-logs-link");
+    const filterLogsSection = document.getElementById("filter-logs");
+    const logFileInput = document.getElementById("log-file-input");
+    const filterButton = document.getElementById("filter-button");
+    const filterResult = document.getElementById("filter-result");
+    const amountThresholdInput = document.getElementById("amount-threshold");
 
     // Обработчик изменения выбора команды
     commandSelect.addEventListener("change", function () {
@@ -200,6 +206,52 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (error) {
             alert("Ошибка в регулярном выражении: " + error.message);
         }
+    });
+
+    filterLogsLink.addEventListener("click", function (e) {
+        e.preventDefault();
+        generateFormSection.style.display = "none";
+        getNicksSection.style.display = "none";
+        filterLogsSection.style.display = "block";
+        setActiveLink(this);
+    });
+    
+    filterButton.addEventListener("click", function () {
+        const file = logFileInput.files[0];
+        if (!file) {
+            alert("Пожалуйста, выберите .txt файл.");
+            return;
+        }
+    
+        const threshold = parseInt(amountThresholdInput.value) || 100000000;
+    
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const content = e.target.result;
+            const lines = content.split(/\r?\n/);
+            const regex = /(\d{1,3}(?:,\d{3})*) руб\./;
+            const filtered = [];
+    
+            for (let i = 0; i < lines.length; i++) {
+                const match = lines[i].match(regex);
+                if (match) {
+                    const value = parseInt(match[1].replace(/,/g, ""));
+                    if (value >= threshold) {
+                        // Соберем блок строк, начиная с этой
+                        let block = [lines[i]];
+                        while (i + 1 < lines.length && !lines[i + 1].match(/^\d{4}-\d{2}-\d{2}/)) {
+                            block.push(lines[++i]);
+                        }
+                        filtered.push(block.join('\n'));
+                    }
+                }
+            }
+    
+            filterResult.textContent = filtered.length
+                ? filtered.join("\n\n---\n\n")
+                : "Нет строк с суммой более " + threshold.toLocaleString("ru-RU") + " руб.";
+        };
+        reader.readAsText(file);
     });
 
     // Установка активной ссылки в навбаре
